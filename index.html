@@ -3,46 +3,57 @@
 <head>
 <title>WebSocket Test</title>
 <script language="javascript" type="text/javascript">
-	var wsUri = "ws://echo.websocket.org/"; 
+	 
 	var output;  
+	var message;
+	var wsUri = "ws://echo.websocket.org/";
+	var websocket; 
+
 	function init() 
 	{
-	 output = document.getElementById("output"); 
-	 testWebSocket(); 
-	}  
-	function testWebSocket() { 
+	 	output = document.getElementById("output"); 
+	 	websocket = new WebSocket(wsUri);
 
-		websocket = new WebSocket(wsUri); 
+	 	//testWebSocket();
+	}  
+
+	function sendMessage(){
+		websocket = new WebSocket(wsUri);
 		websocket.onopen = function(evt) { onOpen(evt) }; 
 		websocket.onclose = function(evt) { onClose(evt) }; 
 		websocket.onmessage = function(evt) { onMessage(evt) }; 
-		websocket.onerror = function(evt) { onError(evt) }; }  
+		websocket.onerror = function(evt) { onError(evt) }; 
+	}
 
-		function onOpen(evt) {
-	 	 	writeToScreen("CONNECTED"); 
-	 	 	doSend("WebSocket rocks"); 
-	 	} 
 
-		function onClose(evt) { writeToScreen("DISCONNECTED"); }  
+	function onOpen(evt) {
+ 	 	writeToScreen("CONNECTED"); 
+		message = document.getElementById("msg");
+		doSend(message.value);
+ 	} 
 
-		function onMessage(evt) {
-		  	writeToScreen('<span style="color: blue;">RESPONSE: ' + evt.data+'</span>');
-		   	websocket.close(); 
-	   	} 
+	function onClose(evt) { writeToScreen("DISCONNECTED"); }  
 
-	   	function onError(evt) { writeToScreen('<span style="color: red;">ERROR:</span> ' + evt.data); }
+	function onMessage(evt) {
+	  	writeToScreen('<span style="color: blue;">RESPONSE: ' + evt.data+'</span>');
+	   	websocket.close(); 
+   	} 
 
-	  	function doSend(message) { 
-	  		writeToScreen("SENT: " + message);  
-	  		websocket.send(message); 
-	  	}
+   	function onError(evt) { writeToScreen('<span style="color: red;">ERROR:</span> ' + evt.data); }
 
-	    function writeToScreen(message) { 
-	    	var pre = document.createElement("p"); 
-	    	pre.style.wordWrap = "break-word"; 
-	    	pre.innerHTML = message; output.appendChild(pre); 
+  	function doSend(message) { 
+  		writeToScreen("SENT: " + message);  
+  		websocket.send(message); 
+  	}
+
+    function writeToScreen(message) { 
+    	var pre = document.createElement("p"); 
+    	pre.style.wordWrap = "break-word"; 
+    	pre.innerHTML = message; output.appendChild(pre); 
 	}  
+
 	window.addEventListener("load", init, false);
+
 </script>  
 </head>
 
@@ -50,11 +61,10 @@
 
 	<h2>WebSocket Test</h2> 
 
-	<form id="myForm" action="form_action.asp">
-	  First name: <input type="text" name="fname"><br>
-	  Last name: <input type="text" name="lname"><br><br>
-		<input type="button" onclick="myFunction()" value="Submit form">
-	/form> 
+	<form id="myForm">
+	  Enter message: <input type="text" id="msg" value="Any old message"/>		
+	  <input type="button" onclick="javascript:sendMessage()" value="Submit"/>
+	</form> 
 
 	<div id="output"></div>
 
